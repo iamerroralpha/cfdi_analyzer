@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/4"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd"
+    Version="4.0"
+    Sello="rH9yyEuN4Baw8lnnzTlxljMEmMBWXaX6TWVPXNxjyFahatoa3gbQv+CXgUgh5d4pOARf5MHCUQXY43NEm8x2dT3o3zuQDEO4R90+Mfdwc7ay++tFf9mcHhlm52iodh4ZN+bjoLhdvjcIw7YNi6QcsLFczNm8fiFW0jg+17Y8p9fx92p5har0rk9eThFRra3Kz1PuhD94wNAtxsk3eFF3F2cEdMiPdmqDNUD/bGDqwaQSt7gEJDKrZP5wAyxsM03YcEEMN9HxY0zQ4xDS7tqQgA+tViz7crWdr7ynjnZmIBmaH+NLniySjHBUNLbvUafqr97AcqunbIxPUqrluM/PQA=="
+    Fecha="2024-08-02T10:51:37" Folio="22" Serie="INV/2024/08/" FormaPago="03"
+    NoCertificado="00001000000518216229"
+    Certificado="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"
+    CondicionesDePago="Pago inmediato" SubTotal="2165.99" Descuento="1010.96" Moneda="MXN"
+    Total="1339.83" TipoDeComprobante="I" Exportacion="01" MetodoPago="PUE" LugarExpedicion="66414">
+    <cfdi:Emisor Rfc="EPA121219PF4" Nombre="ESTRATEGIAS PATFER" RegimenFiscal="601" />
+    <cfdi:Receptor Rfc="VECZ930915GH0" Nombre="ZELTZIN MALINALLI VELAZQUEZ CAMPOS"
+        DomicilioFiscalReceptor="07550" RegimenFiscalReceptor="626" UsoCFDI="G01" />
+    <cfdi:Conceptos>
+        <cfdi:Concepto ClaveProdServ="53131607" NoIdentificacion="FM1001" Cantidad="3.000000"
+            ClaveUnidad="H87" Unidad="UNIDADES"
+            Descripcion="[FM1001] Concentrado de Feromonas 5ml MUJER" ValorUnitario="370.00"
+            Importe="1110.00" ObjetoImp="02" Descuento="555.00">
+            <cfdi:Impuestos>
+                <cfdi:Traslados>
+                    <cfdi:Traslado Base="555.00" Importe="88.80" Impuesto="002" TipoFactor="Tasa"
+                        TasaOCuota="0.160000" />
+                </cfdi:Traslados>
+            </cfdi:Impuestos>
+        </cfdi:Concepto>
+        <cfdi:Concepto ClaveProdServ="53131607" Cantidad="3.000000" ClaveUnidad="H87"
+            Unidad="UNIDADES"
+            Descripcion="Lubricante Feel Love 60ml MULTIORGASMICO FRUTAS PROHIBIDAS"
+            ValorUnitario="169.00" Importe="507.00" ObjetoImp="02" Descuento="251.98">
+            <cfdi:Impuestos>
+                <cfdi:Traslados>
+                    <cfdi:Traslado Base="255.02" Importe="40.80" Impuesto="002" TipoFactor="Tasa"
+                        TasaOCuota="0.160000" />
+                </cfdi:Traslados>
+            </cfdi:Impuestos>
+        </cfdi:Concepto>
+        <cfdi:Concepto ClaveProdServ="53131607" NoIdentificacion="FEEL-MULT" Cantidad="2.000000"
+            ClaveUnidad="H87" Unidad="UNIDADES"
+            Descripcion="[FEEL-MULT] Lubricante Feel Love 60ml MULTIORGASMICO"
+            ValorUnitario="169.00" Importe="337.99" ObjetoImp="02" Descuento="167.98">
+            <cfdi:Impuestos>
+                <cfdi:Traslados>
+                    <cfdi:Traslado Base="170.01" Importe="27.20" Impuesto="002" TipoFactor="Tasa"
+                        TasaOCuota="0.160000" />
+                </cfdi:Traslados>
+            </cfdi:Impuestos>
+        </cfdi:Concepto>
+        <cfdi:Concepto ClaveProdServ="53131607" Cantidad="3.000000" ClaveUnidad="H87"
+            Unidad="UNIDADES" Descripcion="Sobre ANIME SANDIA 5ml" ValorUnitario="24.00"
+            Importe="72.00" ObjetoImp="02" Descuento="36.00">
+            <cfdi:Impuestos>
+                <cfdi:Traslados>
+                    <cfdi:Traslado Base="36.00" Importe="5.76" Impuesto="002" TipoFactor="Tasa"
+                        TasaOCuota="0.160000" />
+                </cfdi:Traslados>
+            </cfdi:Impuestos>
+        </cfdi:Concepto>
+        <cfdi:Concepto ClaveProdServ="78102203" Cantidad="1.000000" ClaveUnidad="H87"
+            Unidad="UNIDADES" Descripcion="GASTOS DE ENVIO -NACIONAL" ValorUnitario="139.00"
+            Importe="139.00" ObjetoImp="02">
+            <cfdi:Impuestos>
+                <cfdi:Traslados>
+                    <cfdi:Traslado Base="139.00" Importe="22.24" Impuesto="002" TipoFactor="Tasa"
+                        TasaOCuota="0.160000" />
+                </cfdi:Traslados>
+            </cfdi:Impuestos>
+        </cfdi:Concepto>
+    </cfdi:Conceptos>
+    <cfdi:Impuestos TotalImpuestosTrasladados="184.80">
+        <cfdi:Traslados>
+            <cfdi:Traslado Base="1155.03" Importe="184.80" Impuesto="002" TipoFactor="Tasa"
+                TasaOCuota="0.160000" />
+        </cfdi:Traslados>
+    </cfdi:Impuestos>
+    <cfdi:Complemento>
+        <tfd:TimbreFiscalDigital xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital"
+            xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd"
+            Version="1.1" UUID="6CC95122-92DC-4BA9-AA9E-35309A12CB72"
+            FechaTimbrado="2024-08-02T10:51:37" RfcProvCertif="SFE0807172W8"
+            SelloCFD="rH9yyEuN4Baw8lnnzTlxljMEmMBWXaX6TWVPXNxjyFahatoa3gbQv+CXgUgh5d4pOARf5MHCUQXY43NEm8x2dT3o3zuQDEO4R90+Mfdwc7ay++tFf9mcHhlm52iodh4ZN+bjoLhdvjcIw7YNi6QcsLFczNm8fiFW0jg+17Y8p9fx92p5har0rk9eThFRra3Kz1PuhD94wNAtxsk3eFF3F2cEdMiPdmqDNUD/bGDqwaQSt7gEJDKrZP5wAyxsM03YcEEMN9HxY0zQ4xDS7tqQgA+tViz7crWdr7ynjnZmIBmaH+NLniySjHBUNLbvUafqr97AcqunbIxPUqrluM/PQA=="
+            NoCertificadoSAT="00001000000505619865"
+            SelloSAT="RPS7AV38f9ku9X1BTa9Sz6nfigyF0ItxWHXH0rSfkoer7QexhVvdgTDNgT/3xWPQX37x5CWpQSsPm+JhM7f1/0dEG3tbf98Qpfbwb7ujThVRRF/YDw2oHStsI1jRoUf28rSoX3QKLdyy6VnozQKbgmOwpd7DcZKWpNuG6NasidJE4oYVLHbEfbtIrAYx7nrKIaK9AKFpiczLkrTaKH58kKQsZBNWlSKFscfnjN/k6BMcT2IGeSyXef4lbJ5pcA0ZclVMbCYCj7/Q7Od/0C4SjMw51mZpgUO5xrEdrU1C08zqGEFnTwMKig+Uk6RxAEgNbg4bj/mBQI+dU6/mwksT2g==" />
+    </cfdi:Complemento>
+</cfdi:Comprobante>
