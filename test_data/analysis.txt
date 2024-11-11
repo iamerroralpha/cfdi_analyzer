@@ -1,0 +1,14 @@
+{
+    "Comprobante": ["SubTotal", "Version", "NoCertificado", "Total", "MetodoPago", "FormaPago", "Fecha", "TipoDeComprobante", "Certificado", "LugarExpedicion", "Moneda", "Sello", "Exportacion"],
+    "Comprobante/Emisor": ["RegimenFiscal", "Rfc", "Nombre"],
+    "Comprobante/Receptor": ["Nombre", "UsoCFDI", "DomicilioFiscalReceptor", "Rfc", "RegimenFiscalReceptor"],
+    many start here
+    "Comprobante/Conceptos/Concepto": ["ObjetoImp", "ValorUnitario", "Importe", "ClaveProdServ", "Descripcion", "Cantidad", "ClaveUnidad"],
+    "Comprobante/Conceptos/Concepto/Impuestos/Traslados/Traslado": ["TasaOCuota", "Importe", "Base", "TipoFactor", "Impuesto"],
+    many end here
+    "Comprobante/Impuestos": ["TotalImpuestosTrasladados"],
+    "Comprobante/Impuestos/Traslados/Traslado":
+    ["TasaOCuota", "Importe", "Base", "TipoFactor", "Impuesto"],
+    "Comprobante/Complemento": [],
+    "Comprobante/Complemento/TimbreFiscalDigital": ["Version", "NoCertificadoSAT", "FechaTimbrado", "RfcProvCertif", "SelloCFD", "UUID", "SelloSAT", "{http://www.w3.org/2001/XMLSchema-instance}schemaLocation"]
+}
