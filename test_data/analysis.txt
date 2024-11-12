@@ -8,6 +8,5 @@
     many end here
     "Comprobante/Impuestos": ["TotalImpuestosTrasladados"],
     "Comprobante/Impuestos/Traslados/Traslado": ["TasaOCuota", "Importe", "Base", "TipoFactor", "Impuesto"],
-    "Comprobante/Complemento": [],
     "Comprobante/Complemento/TimbreFiscalDigital": ["Version", "NoCertificadoSAT", "FechaTimbrado", "RfcProvCertif", "SelloCFD", "UUID", "SelloSAT"]
 }
