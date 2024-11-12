@@ -16,7 +16,8 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
         println!("Expected root element 'Comprobante', found '{}'", root.name());
         return Ok(());
     }
-
+    println!("------------------------------------------------------------------------");
+    println!("Root Complemento: {}", root.name());
     // Step 4: Extract attributes from the "Comprobante" root element
     println!("Root element attributes:");
     let comprobante_attrs = [
@@ -30,9 +31,11 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
         }
     }
     let binding = root.ns();
-    let mut root_namespace = binding.as_str();
+    let root_namespace = binding.as_str();
 
     // Step 5: Process the "Emisor" child
+    println!("------------------------------------------------------------------------");
+    println!("Processing Emisor");
     if let Some(emisor) = root.get_child("Emisor", root_namespace) {
         let emisor_attrs = ["RegimenFiscal", "Rfc", "Nombre"];
         println!("Emisor attributes:");
@@ -43,6 +46,8 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
         }
     }
     // Step 6: Process the "Receptor" child
+    println!("------------------------------------------------------------------------");
+    println!("Processing Receptor");
     if let Some(receptor) = root.get_child("Receptor", root_namespace) {
         let receptor_attrs = ["Nombre", "UsoCFDI", "DomicilioFiscalReceptor", "Rfc", "RegimenFiscalReceptor"];
         println!("Receptor attributes:");
@@ -54,13 +59,15 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
     }
 
     // Step 7: Process multiple "Concepto" items in "Conceptos"
+    println!("------------------------------------------------------------------------");
+    println!("Processing Conceptos");
     if let Some(conceptos) = root.get_child("Conceptos", root_namespace) {
         for concepto in conceptos.children().filter(|c| c.name() == "Concepto") {
             let concepto_attrs = ["ObjetoImp", "ValorUnitario", "Importe", "ClaveProdServ", "Descripcion", "Cantidad", "ClaveUnidad"];
-            println!("Concepto attributes:");
+            println!("\tConcepto attributes:");
             for attr in &concepto_attrs {
                 if let Some(value) = concepto.attr(attr) {
-                    println!("{} = {}", attr, value);
+                    println!("\t\t{} = {}", attr, value);
                 }
             }
 
@@ -69,10 +76,10 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
                 if let Some(traslados) = impuestos.get_child("Traslados", root_namespace) {
                     for traslado in traslados.children().filter(|t| t.name() == "Traslado") {
                         let traslado_attrs = ["TasaOCuota", "Importe", "Base", "TipoFactor", "Impuesto"];
-                        println!("Traslado attributes:");
+                        println!("\t\tTraslado attributes:");
                         for attr in &traslado_attrs {
                             if let Some(value) = traslado.attr(attr) {
-                                println!("{} = {}", attr, value);
+                                println!("\t\t\t{} = {}", attr, value);
                             }
                         }
                     }
@@ -82,6 +89,8 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
     }
 
     // Step 8: Process "Impuestos" at the "Comprobante" level
+    println!("------------------------------------------------------------------------");
+    println!("Processing Impuestos");
     if let Some(impuestos) = root.get_child("Impuestos", root_namespace) {
         if let Some(total_impuestos) = impuestos.attr("TotalImpuestosTrasladados") {
             println!("TotalImpuestosTrasladados = {}", total_impuestos);
@@ -102,8 +111,10 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
     }
 
     // Step 9: Process "Complemento" and "TimbreFiscalDigital"
+    println!("------------------------------------------------------------------------");
+    println!("Processing Complemento and TimbreFiscalDigital");
     if let Some(complemento) = root.get_child("Complemento", root_namespace) {
-        if let Some(timbre) = complemento.get_child("TimbreFiscalDigital", root_namespace) {
+        if let Some(timbre) = complemento.get_child("TimbreFiscalDigital", "http://www.sat.gob.mx/TimbreFiscalDigital") {
             let timbre_attrs = ["Version", "NoCertificadoSAT", "FechaTimbrado", "RfcProvCertif", "SelloCFD", "UUID", "SelloSAT"];
             println!("TimbreFiscalDigital attributes:");
             for attr in &timbre_attrs {
