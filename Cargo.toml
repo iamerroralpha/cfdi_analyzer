@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-quick-xml = { version = "0.36.1", features = ["serialize"] }
-serde = {version = "1.0", features = ["derive"] }
+minidom = "0.16"
+quick-xml = { version = "0.37.0", features = ["serialize"] }
+serde = {version = "1.0.215", features = ["derive"] }
 serde-xml-rs = "0.6.0"
 chrono = "0.4"
