@@ -12,6 +12,9 @@ fn explore_root(file_name: &str) -> Result<Comprobante, Box<dyn Error>> {
     let mut contents = String::new();
     File::open(file_name)?.read_to_string(&mut contents)?;
 
+    // Step to remove BOM or any leading whitespace
+    let contents = contents.trim_start_matches('\u{feff}').trim_start();
+
     // Step 2: Parse the content into an XML root element
     let root: Element = contents.parse()?;
 
@@ -247,7 +250,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 
     for path in paths {
-        println!("Executing for file: {:?}", path);
+        println!("\n\n\n\nExecuting for file: {:?}", path);
     
         // Try to unwrap the path, handle any errors that occur
         let path = match path {
@@ -266,7 +269,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             Ok(comprobante) => {
                 let duration = start.elapsed();
                 println!("Execution time for explore_root: {:?}", duration);
-                //println!("{:#?}", comprobante);
+                println!("{:#?}", comprobante);
             },
             Err(e) => {
                 eprintln!("Error processing file {}: {:?}", file_name, e);
