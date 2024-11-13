@@ -1,12 +1,13 @@
 mod models;
 
 use minidom::Element;
-use std::fs::File;
+use std::{fs::File, path};
 use std::io::Read;
 use std::error::Error;
 use models::comprobante::{Comprobante, Emisor, Receptor, Concepto, Impuestos, Traslado, TimbreFiscalDigital};
+use std::time::Instant;
 
-fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
+fn explore_root(file_name: &str) -> Result<Comprobante, Box<dyn Error>> {
     // Step 1: Load the XML file content into a string
     let mut contents = String::new();
     File::open(file_name)?.read_to_string(&mut contents)?;
@@ -16,14 +17,14 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
 
     // Step 3: Ensure the root element is "Comprobante"
     if root.name() != "Comprobante" {
-        println!("Expected root element 'Comprobante', found '{}'", root.name());
-        return Ok(());
+        //println!("Expected root element 'Comprobante', found '{}'", root.name());
+        return Ok(Comprobante::default());
     }
     let mut comprobante = Comprobante::default();
-    println!("------------------------------------------------------------------------");
-    println!("Root Complemento: {}", root.name());
+    //println!("------------------------------------------------------------------------");
+    //println!("Root Complemento: {}", root.name());
     // Step 4: Extract attributes from the "Comprobante" root element
-    println!("Root element attributes:");
+    //println!("Root element attributes:");
     let comprobante_attrs = [
         "SubTotal", "Version", "NoCertificado", "Total", "MetodoPago",
         "FormaPago", "Fecha", "TipoDeComprobante", "Certificado",
@@ -31,8 +32,8 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
     ];
 
     comprobante.version = root.attr("Version").unwrap().to_string();
-    comprobante.serie = root.attr("Serie").unwrap().to_string();
-    comprobante.folio = root.attr("Folio").unwrap().to_string();
+    //comprobante.serie = root.attr("Serie").unwrap().to_string();
+    //comprobante.folio = root.attr("Folio").unwrap().to_string();
     comprobante.fecha = root.attr("Fecha").unwrap().to_string();
     comprobante.sello = root.attr("Sello").unwrap().to_string();
     comprobante.forma_pago = root.attr("FormaPago").unwrap().to_string();
@@ -46,15 +47,15 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
 
     for attr in &comprobante_attrs {
         if let Some(value) = root.attr(attr) {
-            println!("{} = {}", attr, value);
+            //println!("{} = {}", attr, value);
         }
     }
     let binding = root.ns();
     let root_namespace = binding.as_str();
 
     // Step 5: Process the "Emisor" child
-    println!("------------------------------------------------------------------------");
-    println!("Processing Emisor");
+    //println!("------------------------------------------------------------------------");
+    //println!("Processing Emisor");
 
     let emisor = Emisor {
         rfc: root.get_child("Emisor", root_namespace).unwrap().attr("Rfc").unwrap().to_string(),
@@ -66,16 +67,16 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
 
     if let Some(emisor) = root.get_child("Emisor", root_namespace) {
         let emisor_attrs = ["RegimenFiscal", "Rfc", "Nombre"];
-        println!("Emisor attributes:");
+        //println!("Emisor attributes:");
         for attr in &emisor_attrs {
             if let Some(value) = emisor.attr(attr) {
-                println!("{} = {}", attr, value);
+                //println!("{} = {}", attr, value);
             }
         }
     }
     // Step 6: Process the "Receptor" child
-    println!("------------------------------------------------------------------------");
-    println!("Processing Receptor");
+    //println!("------------------------------------------------------------------------");
+    //println!("Processing Receptor");
 
     let receptor = Receptor {
         rfc: root.get_child("Receptor", root_namespace).unwrap().attr("Rfc").unwrap().to_string(),
@@ -89,17 +90,17 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
 
     if let Some(receptor) = root.get_child("Receptor", root_namespace) {
         let receptor_attrs = ["Nombre", "UsoCFDI", "DomicilioFiscalReceptor", "Rfc", "RegimenFiscalReceptor"];
-        println!("Receptor attributes:");
+        //println!("Receptor attributes:");
         for attr in &receptor_attrs {
             if let Some(value) = receptor.attr(attr) {
-                println!("{} = {}", attr, value);
+                //println!("{} = {}", attr, value);
             }
         }
     }
 
     // Step 7: Process multiple "Concepto" items in "Conceptos"
-    println!("------------------------------------------------------------------------");
-    println!("Processing Conceptos");
+    //println!("------------------------------------------------------------------------");
+    //println!("Processing Conceptos");
     if let Some(conceptos) = root.get_child("Conceptos", root_namespace) {
         for concepto in conceptos.children().filter(|c| c.name() == "Concepto") {
 
@@ -113,10 +114,10 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
             concepto_obj.clave_unidad = concepto.attr("ClaveUnidad").unwrap().to_string();
 
             let concepto_attrs = ["ObjetoImp", "ValorUnitario", "Importe", "ClaveProdServ", "Descripcion", "Cantidad", "ClaveUnidad"];
-            println!("\tConcepto attributes:");
+            //println!("\tConcepto attributes:");
             for attr in &concepto_attrs {
                 if let Some(value) = concepto.attr(attr) {
-                    println!("\t\t{} = {}", attr, value);
+                    //println!("\t\t{} = {}", attr, value);
                 }
             }
 
@@ -134,13 +135,13 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
                         traslado_obj.tipo_factor = traslado.attr("TipoFactor").unwrap().to_string();
                         traslado_obj.impuesto = traslado.attr("Impuesto").unwrap().to_string();
 
-                        concepto_obj.impuestos.traslados.push(traslado_obj);
+                        concepto_obj.impuestos = traslado_obj;
 
                         let traslado_attrs = ["TasaOCuota", "Importe", "Base", "TipoFactor", "Impuesto"];
-                        println!("\t\tTraslado attributes:");
+                        //println!("\t\tTraslado attributes:");
                         for attr in &traslado_attrs {
                             if let Some(value) = traslado.attr(attr) {
-                                println!("\t\t\t{} = {}", attr, value);
+                                //println!("\t\t\t{} = {}", attr, value);
                             }
                         }
                     }
@@ -152,15 +153,15 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
     }
 
     // Step 8: Process "Impuestos" at the "Comprobante" level
-    println!("------------------------------------------------------------------------");
-    println!("Processing Impuestos");
+    //println!("------------------------------------------------------------------------");
+    //println!("Processing Impuestos");
     if let Some(impuestos) = root.get_child("Impuestos", root_namespace) {
         let mut impuestos_obj = Impuestos::default();
 
         impuestos_obj.total_impuestos_trasladados = impuestos.attr("TotalImpuestosTrasladados").unwrap().to_string();
 
         if let Some(total_impuestos) = impuestos.attr("TotalImpuestosTrasladados") {
-            println!("TotalImpuestosTrasladados = {}", total_impuestos);
+            //println!("TotalImpuestosTrasladados = {}", total_impuestos);
         }
 
         // Process "Traslado" under "Impuestos"
@@ -178,10 +179,10 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
                 impuestos_obj.traslados.push(traslado_obj);
 
                 let traslado_attrs = ["TasaOCuota", "Importe", "Base", "TipoFactor", "Impuesto"];
-                println!("Impuestos Traslado attributes:");
+                //println!("Impuestos Traslado attributes:");
                 for attr in &traslado_attrs {
                     if let Some(value) = traslado.attr(attr) {
-                        println!("{} = {}", attr, value);
+                        //println!("{} = {}", attr, value);
                     }
                 }
             }
@@ -191,8 +192,8 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
     }
 
     // Step 9: Process "Complemento" and "TimbreFiscalDigital"
-    println!("------------------------------------------------------------------------");
-    println!("Processing Complemento and TimbreFiscalDigital");
+    //println!("------------------------------------------------------------------------");
+    //println!("Processing Complemento and TimbreFiscalDigital");
     if let Some(complemento) = root.get_child("Complemento", root_namespace) {
         if let Some(timbre) = complemento.get_child("TimbreFiscalDigital", "http://www.sat.gob.mx/TimbreFiscalDigital") {
 
@@ -209,19 +210,69 @@ fn explore_root(file_name: &str) -> Result<(), Box<dyn Error>> {
             comprobante.timbre_fiscal_digital = timbre_obj;
 
             let timbre_attrs = ["Version", "NoCertificadoSAT", "FechaTimbrado", "RfcProvCertif", "SelloCFD", "UUID", "SelloSAT"];
-            println!("TimbreFiscalDigital attributes:");
+            //println!("TimbreFiscalDigital attributes:");
             for attr in &timbre_attrs {
                 if let Some(value) = timbre.attr(attr) {
-                    println!("{} = {}", attr, value);
+                    //println!("{} = {}", attr, value);
                 }
             }
         }
     }
-
-    Ok(())
+    Ok(comprobante)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    explore_root("test_data/INV-INV2024080022-MX-Invoice-4.0.xml")?;
+    let comprobante =  explore_root("test_data/SLI010507984_00461_LZWE_14555_11132554.xml")?;
+
+    //println!("Finished processing XML file - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
+
+    //println!("{:#?}", comprobante);
+
+    //now iterate over all the files in test_data folder that are xml files
+
+    let paths = path::Path::new("test_data").read_dir()?;
+
+    // filter only xml files
+
+    let paths = paths.filter(|entry| {
+        if let Ok(entry) = entry {
+            if let Some(extension) = entry.path().extension() {
+                if extension == "xml" {
+                    return true;
+                }
+            }
+        }
+        false
+    });
+
+
+    for path in paths {
+        println!("Executing for file: {:?}", path);
+    
+        // Try to unwrap the path, handle any errors that occur
+        let path = match path {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("Error accessing path: {:?}", e);
+                continue; // Skip to the next iteration on error
+            }
+        };
+    
+        let file_name = path.path().display().to_string();
+        let start = Instant::now();
+    
+        // Try to execute explore_root, handle errors if any
+        match explore_root(&file_name) {
+            Ok(comprobante) => {
+                let duration = start.elapsed();
+                println!("Execution time for explore_root: {:?}", duration);
+                //println!("{:#?}", comprobante);
+            },
+            Err(e) => {
+                eprintln!("Error processing file {}: {:?}", file_name, e);
+            }
+        }
+    }
+
     Ok(())
 }

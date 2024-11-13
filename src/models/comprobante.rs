@@ -46,7 +46,7 @@ pub struct Concepto {
     pub descripcion: String,
     pub cantidad: String,
     pub clave_unidad: String,
-    pub impuestos: Impuestos,
+    pub impuestos: Traslado,
 }
 
 #[derive(Debug, Default)]
