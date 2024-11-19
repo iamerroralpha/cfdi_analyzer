@@ -5,7 +5,7 @@ use std::{fs::File, io::Read, path};
 use std::error::Error;
 use std::time::Instant;
 use rayon::prelude::*; // Parallel processing with Rayon
-use models::comprobante::{self, Comprobante, Concepto, Emisor, Impuestos, Receptor, TimbreFiscalDigital, Traslado};
+use models::comprobante::{Comprobante, Concepto, Emisor, Impuestos, Receptor, TimbreFiscalDigital, Traslado};
 
 fn parse_xml_file(file_name: &str) -> Result<Element, Box<dyn Error>> {
     let mut contents = String::new();
