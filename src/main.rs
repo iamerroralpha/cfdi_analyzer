@@ -136,14 +136,10 @@ fn extract_comprobante(root: &Element) -> Comprobante {
 fn process_file(file_name: &str) -> Result<Comprobante, Box<dyn Error>> {
     let root = parse_xml_file(file_name)?;
     let comprobante = extract_comprobante(&root);
-    println!("{:#?}", comprobante);
     Ok(comprobante)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    //timing the overall process
-
-    let start = Instant::now();
 
     let paths: Vec<_> = path::Path::new("test_data")
         .read_dir()?
@@ -151,17 +147,38 @@ fn main() -> Result<(), Box<dyn Error>> {
         .filter(|entry| entry.path().extension().map_or(false, |ext| ext == "xml"))
         .collect();
 
-    paths.par_iter().for_each(|entry| {
-        let binding = entry.path();
-        let file_name = binding.to_str().unwrap();
-        let start = Instant::now();
-        if let Err(e) = process_file(file_name) {
-            eprintln!("Error processing file {}: {:?}", file_name, e);
+        println!("Running sequential execution...");
+        let sequential_start = Instant::now();
+        for entry in &paths {
+            let path = entry.path();
+            let file_name = path.to_str().unwrap();
+            let start = Instant::now();
+            if let Err(e) = process_file(file_name) {
+                eprintln!("Error processing file {}: {:?}", file_name, e);
+            }
+            println!("Processed {} in {:?}", file_name, start.elapsed());
         }
-        println!("Processed {} in {:?}", file_name, start.elapsed());
-    });
-
-    println!("Overall time: {:?}", start.elapsed());
+        println!(
+            "Sequential execution completed in {:?}\n",
+            sequential_start.elapsed()
+        );
+    
+        println!("Running parallel execution...");
+        let parallel_start = Instant::now();
+        paths.par_iter().for_each(|entry| {
+            let path = entry.path();
+            let file_name = path.to_str().unwrap();
+            let start = Instant::now();
+            if let Err(e) = process_file(file_name) {
+                eprintln!("Error processing file {}: {:?}", file_name, e);
+            }
+            println!("Processed {} in {:?}", file_name, start.elapsed());
+        });
+        println!(
+            "Parallel execution completed in {:?}\n",
+            parallel_start.elapsed()
+        );
+    
 
     Ok(())
 }
