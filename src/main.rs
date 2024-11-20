@@ -1,7 +1,9 @@
 mod models;
 
+use eframe::egui;
+use rfd::FileDialog;
 use minidom::Element;
-use std::{fs::File, io::Read, path};
+use std::{fs::File, io::Read, path, path::PathBuf, io::Write};
 use std::error::Error;
 use std::time::Instant;
 use rayon::prelude::*; // Parallel processing with Rayon
@@ -136,10 +138,24 @@ fn extract_comprobante(root: &Element) -> Comprobante {
 fn process_file(file_name: &str) -> Result<Comprobante, Box<dyn Error>> {
     let root = parse_xml_file(file_name)?;
     let comprobante = extract_comprobante(&root);
+    println!("{:?}", comprobante);
     Ok(comprobante)
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn process_files(files: &[PathBuf]) -> Result<String, Box<dyn Error>> {
+    let mut output_file = File::create("output.csv")?;
+    writeln!(output_file, "Version,Fecha,Sello,FormaPago,NoCertificado,Certificado,SubTotal,Total,TipoDeComprobante,MetodoPago,LugarExpedicion,RfcEmisor,NombreEmisor,RegimenFiscalEmisor,RfcReceptor,NombreReceptor,UsoCFDIReceptor,DomicilioFiscalReceptor,RegimenFiscalReceptor,ObjetoImp,ValorUnitario,Importe,ClaveProdServ,Descripcion,Cantidad,ClaveUnidad,TasaOCuotaTraslado,ImporteTraslado,BaseTraslado,TipoFactorTraslado,ImpuestoTraslado,TotalImpuestosTrasladados,TasaOCuotaTrasladoImpuestos,ImporteTrasladoImpuestos,BaseTrasladoImpuestos,TipoFactorTrasladoImpuestos,ImpuestoTrasladoImpuestos,VersionTimbre,NoCertificadoSAT,FechaTimbrado,RfcProvCertif,SelloCFD,UUID,SelloSAT")?;
+
+    for file in files {
+        let file_name = file.to_str().unwrap();
+        let comprobante = process_file(file_name)?;
+        writeln!(output_file, "{:#?}", comprobante)?;
+    }
+
+    Ok("output.csv".to_string())
+}
+
+fn testing() -> Result<(), Box<dyn Error>> {
 
     let paths: Vec<_> = path::Path::new("test_data")
         .read_dir()?
@@ -181,4 +197,66 @@ fn main() -> Result<(), Box<dyn Error>> {
     
 
     Ok(())
+}
+
+fn main() -> Result<(), eframe::Error> {
+    let options = eframe::NativeOptions::default();
+    eframe::run_native(
+        "XML to CSV Processor",
+        options,
+        Box::new(|_cc| Ok(Box::new(App::default()))),
+    )
+}
+
+struct App {
+    selected_files : Vec<PathBuf>,
+    status_message: String,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        Self {
+            selected_files: Vec::new(),
+            status_message: String::new(),
+        }
+    }
+}
+
+impl eframe::App for App {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.heading("XML to CSV Processor");
+
+            if ui.button("Select XML Files").clicked() {
+                if let Some(files) = FileDialog::new()
+                    .add_filter("XML files", &["xml"])
+                    .pick_files()
+                {
+                    self.selected_files = files;
+                    self.status_message = format!("Selected {} files.", self.selected_files.len());
+                }
+            }
+
+            if !self.selected_files.is_empty() {
+                ui.label("Selected files:");
+                for file in &self.selected_files {
+                    ui.label(file.display().to_string());
+                }
+
+                if ui.button("Process & Export to CSV").clicked() {
+                    match process_files(&self.selected_files) {
+                        Ok(output_file) => {
+                            self.status_message = format!("CSV exported to: {}", output_file);
+                        }
+                        Err(e) => {
+                            self.status_message = format!("Error: {}", e);
+                        }
+                    }
+                }
+            }
+
+            ui.separator();
+            ui.label(&self.status_message);
+        });
+    }
 }
