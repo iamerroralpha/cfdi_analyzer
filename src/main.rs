@@ -48,8 +48,8 @@ fn extract_comprobante(root: &Element) -> Comprobante {
             rfc: receptor_elem.attr("Rfc").unwrap_or_default().to_string(),
             nombre: receptor_elem.attr("Nombre").unwrap_or_default().to_string(),
             uso_cfdi: receptor_elem.attr("UsoCFDI").unwrap_or_default().to_string(),
-            domicilio_fiscal: receptor_elem.attr("DomicilioFiscal").unwrap_or_default().to_string(),
-            regimen_fiscal: receptor_elem.attr("RegimenFiscal").unwrap_or_default().to_string(),
+            domicilio_fiscal: receptor_elem.attr("DomicilioFiscalReceptor").unwrap_or_default().to_string(),
+            regimen_fiscal: receptor_elem.attr("RegimenFiscalReceptor").unwrap_or_default().to_string(),
         };
     }
 
@@ -144,12 +144,23 @@ fn process_file(file_name: &str) -> Result<Comprobante, Box<dyn Error>> {
 
 fn process_files(files: &[PathBuf]) -> Result<String, Box<dyn Error>> {
     let mut output_file = File::create("output.csv")?;
-    writeln!(output_file, "Version,Fecha,Sello,FormaPago,NoCertificado,Certificado,SubTotal,Total,TipoDeComprobante,MetodoPago,LugarExpedicion,RfcEmisor,NombreEmisor,RegimenFiscalEmisor,RfcReceptor,NombreReceptor,UsoCFDIReceptor,DomicilioFiscalReceptor,RegimenFiscalReceptor,ObjetoImp,ValorUnitario,Importe,ClaveProdServ,Descripcion,Cantidad,ClaveUnidad,TasaOCuotaTraslado,ImporteTraslado,BaseTraslado,TipoFactorTraslado,ImpuestoTraslado,TotalImpuestosTrasladados,TasaOCuotaTrasladoImpuestos,ImporteTrasladoImpuestos,BaseTrasladoImpuestos,TipoFactorTrasladoImpuestos,ImpuestoTrasladoImpuestos,VersionTimbre,NoCertificadoSAT,FechaTimbrado,RfcProvCertif,SelloCFD,UUID,SelloSAT")?;
+    writeln!(
+        output_file, "{}", Comprobante::get_headers()
+    )?;
 
     for file in files {
         let file_name = file.to_str().unwrap();
         let comprobante = process_file(file_name)?;
-        writeln!(output_file, "{:#?}", comprobante)?;
+    
+        // Write the main `Comprobante` row
+        write!(output_file, "{}", file_name)?;
+        writeln!(output_file, "{}", comprobante)?;
+    
+        // Write each `Concepto` with its `Traslado` rows
+        for concepto in comprobante.conceptos {
+            write!(output_file, "{}", concepto)?;
+            writeln!(output_file, "{}", concepto.impuestos)?;
+        }
     }
 
     Ok("output.csv".to_string())
@@ -225,9 +236,9 @@ impl Default for App {
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("XML to CSV Processor");
+            ui.heading("Facturas XML a CSV");
 
-            if ui.button("Select XML Files").clicked() {
+            if ui.button("Selecciona archivos XML").clicked() {
                 if let Some(files) = FileDialog::new()
                     .add_filter("XML files", &["xml"])
                     .pick_files()
@@ -238,15 +249,22 @@ impl eframe::App for App {
             }
 
             if !self.selected_files.is_empty() {
-                ui.label("Selected files:");
+                ui.label("Archivos seleccionados:");
                 for file in &self.selected_files {
                     ui.label(file.display().to_string());
                 }
 
-                if ui.button("Process & Export to CSV").clicked() {
+                if ui.button("Procesar y exportar a CSV").clicked() {
                     match process_files(&self.selected_files) {
                         Ok(output_file) => {
-                            self.status_message = format!("CSV exported to: {}", output_file);
+                            match std::env::current_dir() {
+                                Ok(current_dir) => {
+                                    self.status_message = format!("CSV exportado a: {}", current_dir.join(output_file).display());
+                                }
+                                Err(e) => {
+                                    self.status_message = format!("Error obteniendo el directorio actual: {}", e);
+                                }
+                            }
                         }
                         Err(e) => {
                             self.status_message = format!("Error: {}", e);

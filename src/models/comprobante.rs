@@ -1,9 +1,8 @@
+use core::fmt;
 
 #[derive(Debug, Default)]
 pub struct Comprobante {
     pub version: String,
-    pub serie: String,
-    pub folio: String,
     pub fecha: String,
     pub sello: String,
     pub forma_pago: String,
@@ -19,6 +18,44 @@ pub struct Comprobante {
     pub conceptos: Vec<Concepto>,
     pub impuestos: Impuestos,
     pub timbre_fiscal_digital: TimbreFiscalDigital,
+}
+
+impl Comprobante {
+    //create a function that returns HEADERS_1 concatenated to HEADERS_2
+    pub fn get_headers() -> String {
+        format!("{},{}", HEADERS_1, HEADERS_2)
+    }
+}
+
+pub const HEADERS_1: &str = "Archivo,Version,Fecha,FormaPago,SubTotal,Total,TipoDeComprobante,MetodoPago,LugarExpedicion,EmisorRFC,EmisorNombre,EmisorRegimenFiscal,ReceptorRFC,ReceptorNombre,ReceptorUsoCFDI,ReceptorRegimenFiscal,TotalImpuestosTrasladados,TimbreUUID,TimbreFechaTimbrado,TimbreRFCProvCertif,TimbreNoCertificadoSAT";
+
+impl fmt::Display for Comprobante {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            ",{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
+            self.version,
+            self.fecha,
+            self.forma_pago,
+            self.sub_total,
+            self.total,
+            self.tipo_de_comprobante,
+            self.metodo_pago,
+            self.lugar_expedicion,
+            self.emisor.rfc,
+            self.emisor.nombre,
+            self.emisor.regimen_fiscal,
+            self.receptor.rfc,
+            self.receptor.nombre,
+            self.receptor.uso_cfdi,
+            self.receptor.regimen_fiscal,
+            self.impuestos.total_impuestos_trasladados,
+            self.timbre_fiscal_digital.uuid,
+            self.timbre_fiscal_digital.fecha_timbrado,
+            self.timbre_fiscal_digital.rfc_prov_certif,
+            self.timbre_fiscal_digital.no_certificado_sat,
+        )
+    }
 }
 
 #[derive(Debug, Default)]
@@ -49,6 +86,21 @@ pub struct Concepto {
     pub impuestos: Traslado,
 }
 
+pub const HEADERS_2: &str = "ClaveProdServ,Descripcion,Cantidad,ValorUnitario,TasaOCuota,Importe,Base,TipoFactor,Impuesto";
+
+impl fmt::Display for Concepto {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            ",,,,,,,,,,,,,,,,,,,,,{},{},{},{}",
+            self.clave_prod_serv,
+            self.descripcion,
+            self.cantidad,
+            self.valor_unitario
+        )
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct Impuestos {
     pub total_impuestos_trasladados: String,
@@ -62,6 +114,16 @@ pub struct Traslado {
     pub base: String,
     pub tipo_factor: String,
     pub impuesto: String,
+}
+
+impl fmt::Display for Traslado {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            ",{},{},{},{},{}",
+            self.tasa_o_cuota, self.importe, self.base, self.tipo_factor, self.impuesto
+        )
+    }
 }
 
 #[derive(Debug, Default)]
